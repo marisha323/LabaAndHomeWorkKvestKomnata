@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: url("https://questzone.com.ua/dist/pict_rooms/Iv2L35Tj.jpg");
+            padding: 50px;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: large;
+            background-size: no-repeat;
+            background-position: center;
+            background-size: cover;
+        }
+
+        .contener {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 10px;
+            width: 85%;
+            background-image: url("https://www.bodo.ua/resize/upload/files/cm-experience/102/101728/images_file/all_all_big-t1604571205-r1w768h425q90zc1.jpg");
+            padding: 20px;
+            border-radius: 20px;
+            margin: auto;
+            background-size: no-repeat;
+            background-position: center;
+            background-size: cover;
+        }
+
+        .contener2 {
+            width: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            row-gap: 20px;
+            row-gap: 20px;
+            background-size: no-repeat;
+            background-position: center;
+            background-size: cover;
+            background-image: url("https://img.freepik.com/premium-photo/horror-background_173387-1447.jpg");
+            padding: 20px;
+            color: lime;
+            font-weight: bold;
+            border-radius: 20px;
+        }
+
+        .contener3 {
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .contener4 {
+            width: 100%;
+            height: 200px;
+            border-radius: 20px;
+        }
+
+        .contener5 {
+            width: 200px;
+            height: auto;
+            word-break: break-word;
+        }
+       
+        .style1 {
+            color: lime;
+        }
+
+        .styleButton {
+            justify-content: center;
+            width: 60px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="contener">
+        <div class="style1">
+            <input id="roomid" type="hidden" />
+            <br />
+            <label>Введіть назву кімнати <input id="nameroom" type="text"></label>
+            <br>
+            <label>Завантажте картинку кімнати <input id="passimg" type="file"></label>
+            <br>
+            <label>Введіть кількість людей в кімнаті <input id="koluser" type="text"></label>
+            <br>
+            <label>Додайте опис кімнати <textarea id="roominfo"></textarea></label>
+            <br>
+            <label>Зберегти запис <input id="Save" class="styleButton" type="button" value="Save"></label>
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div id="perent" class="contener">
+        <!--<div class="contener2">
+            <div class="contener3">fff</div>
+            <div>
+                <p>Кількість людей<span id="kolychas">2</span></p>
+                <br />
+                <p>Шлях до картинки<span id="pass">D/img.png</span></p>
+            </div>
+            <div class="contener5">fdeyhyhfgdjhfygklotuyhkijythgdkmhtgfkvchbfcdhdfhdfhdfhdfhdfhdfhdfhdfhdfh</div>
+        </div>-->
+    </div>
+
+
+    <script>
+        async function GetRoom() {
+
+            const respons = await fetch("/api/room", { method: "GET", headers: { "Accept": "application/json" } });
+            if (respons.ok) {
+                let room = await respons.json();
+               
+                let container = document.querySelector("#perent");
+                for (let el of room) {
+                    container.appendChild(AddRoomQuest(el));
+
+                }
+                console.log("1");
+
+            }
+        }
+        GetRoom();
+        function AddRoomQuest(obj) {
+            console.log(obj);
+
+            var AddRoom = document.createElement('div');
+            AddRoom.setAttribute("class", "contener2");
+
+            var divnameroom = document.createElement("div");
+            divnameroom.setAttribute("class", "contener3");
+            divnameroom.innerText = `${obj.nameRoom}`
+
+            var div2 = document.createElement("div");
+
+            var pKolGemer = document.createElement("p");
+            pKolGemer.innerText = "Кількість людей ";
+            var spanKolGemer = document.createElement("span");
+            spanKolGemer.innerText = `${obj.kolUchas}`;
+
+            var pPass = document.createElement("p");
+            pPass.innerText = "Шлях до картинки";
+            var spanPass = document.createElement("span");
+            spanPass.innerText = `${obj.passImg}`;
+
+            var divInfoRoom = document.createElement("div");
+            divInfoRoom.setAttribute("class", "contener5");
+            divInfoRoom.innerText = `${obj.infoRoom}`;
+
+            pKolGemer.appendChild(spanKolGemer);
+            pPass.appendChild(spanPass);
+
+            div2.appendChild(pKolGemer);
+            div2.appendChild(pPass);
+
+            AddRoom.appendChild(divnameroom);
+            AddRoom.appendChild(div2);
+            AddRoom.appendChild(divInfoRoom);
+
+            //var perent = document.getElementById('perent');
+            //perent.appendChild(AddRoom);
+
+            return AddRoom;
+        }
+
+        document.getElementById("Save").addEventListener("click", async () => {
+            console.log("3");
+            let id = document.getElementById("roomid").value;
+            let nameroom = document.getElementById("nameroom").value;
+            let passimg = document.getElementById("passimg").value;
+            let koluser = document.getElementById("koluser").value;
+            let roominfo = document.getElementById("roominfo").value;
+            console.log(nameroom);
+            console.log(passimg);
+            console.log(koluser);
+            console.log(roominfo);
+            if (id == "") {
+                await createRoom(nameroom, passimg, koluser, roominfo);
+            }
+            else {
+                alert("error");
+            }
+        });
+        async function createRoom(nameroom, passimg, koluser, roominfo) {
+            console.log("2");
+            console.log(nameroom);
+            console.log(passimg);
+            console.log(koluser);
+            console.log(roominfo);
+                const respons = await fetch("/api/room", {
+                    method: "POST", headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                    body: JSON.stringify({ NameRoom: nameroom, PassImg: passimg, KolUchas: koluser, InfoRoom: roominfo })
+                });
+
+                if (respons.ok) {
+                    let car = await respons.json();
+                   
+                    document.querySelector("#perent").appendChild(AddRoomQuest(car));
+                }
+                else {
+                    const exeption = await Response.json();
+                    alert(exeption.message);
+            }
+            
+
+            }
+    </script>
+
+
+
+</body>
+</html>
